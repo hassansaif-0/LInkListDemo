@@ -79,3 +79,113 @@ public:
         return size;
     }
 };
+
+// ==================== LINKED LIST CIRCULAR QUEUE ====================
+template<typename T>
+class LinkedListCircularQueue {
+    ListNode<T>* rear; 
+    int size;
+    int capacity;
+
+public:
+    LinkedListCircularQueue(int cap = 100) {
+        rear = NULL;
+        size = 0;
+        capacity = cap;
+    }
+
+
+    ~LinkedListCircularQueue() {
+        if (isEmpty()) return;
+        
+        // Break the circle first
+        if (rear->next == rear) {
+            delete rear;
+        } else {
+            ListNode<T>* current = rear->next;
+            ListNode<T>* start = current;
+            
+            do {
+                ListNode<T>* temp = current;
+                current = current->next;
+                delete temp;
+            } while (current != start);
+        }
+    }
+
+    void enqueue(T item) {
+        if (isFull()) {
+            cout << "Queue is full!\n";
+            return;
+        }
+        
+        ListNode<T>* newNode = new ListNode<T>(item);
+        
+        if (isEmpty()) {
+            rear = newNode;
+            rear->next = rear;
+        } else {
+            newNode->next = rear->next; 
+            rear->next = newNode; 
+            rear = newNode; 
+        }
+        size++;
+    }
+
+    T dequeue() {
+        if (isEmpty()) {
+            cout << "Queue is empty!\n";
+            return T();
+        }
+        
+        ListNode<T>* frontNode;
+        T item;
+        
+        if (rear->next == rear) { 
+            frontNode = rear;
+            item = frontNode->data;
+            delete frontNode;
+            rear = nullptr;
+        } else {
+            frontNode = rear->next; 
+            item = frontNode->data;
+            rear->next = frontNode->next; 
+            delete frontNode;
+        }
+        
+        size--;
+        return item;
+    }
+
+    bool isEmpty() {
+        return rear == NULL;
+    }
+
+    bool isFull() {
+        return size >= capacity;
+    }
+
+    T peek() {
+        if (isEmpty()) {
+            return T();
+        }
+        return rear->next->data; 
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty!\n";
+            return;
+        }
+        
+        cout << "Circular Queue contents (size=" << size << ", capacity=" << capacity << "):\n";
+        ListNode<T>* current = rear->next; 
+        ListNode<T>* start = current;
+        int index = 0;
+        
+        do {
+            cout << "Node " << index++ << ": " << current->data << endl;
+            current = current->next;
+        } while (current != start);
+    }
+};
