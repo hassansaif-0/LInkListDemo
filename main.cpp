@@ -189,3 +189,86 @@ public:
         } while (current != start);
     }
 };
+
+template<typename T>
+class LinkedListQueue {
+    ListNode<T>* front;
+    ListNode<T>* rear;
+    int size;
+
+public:
+   LinkedListQueue(){
+        front = NULL;
+        rear = NULL;
+        size = 0;
+    }
+
+
+    ~LinkedListQueue() {
+        while (!isEmpty()) {
+            dequeue();
+        }
+    }
+
+    void enqueue(T item) {
+        ListNode<T>* newNode = new ListNode<T>(item);
+        
+        if (isEmpty()) {
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+        size++;
+    }
+
+    T dequeue() {
+        if (isEmpty()) {
+            cout << "Queue is empty!\n";
+            return T();
+        }
+        
+        ListNode<T>* temp = front;
+        T item = front->data;
+        front = front->next;
+        
+        if (front == NULL) {
+            rear = NULL;
+        }
+        
+        delete temp;
+        size--;
+        return item;
+    }
+
+    bool isEmpty() {
+        return front == NULL;
+    }
+
+    T peek() {
+        if (isEmpty()) {
+            return T();
+        }
+        return front->data;
+    }
+
+    int getSize() {
+        return size;
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty!\n";
+            return;
+        }
+        
+        cout << "Queue contents (size=" << size << "):\n";
+        ListNode<T>* current = front;
+        int index = 0;
+        
+        while (current != NULL) {
+            cout << "Node " << index++ << ": " << current->data << endl;
+            current = current->next;
+        }
+    }
+};
